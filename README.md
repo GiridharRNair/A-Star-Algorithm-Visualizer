@@ -25,7 +25,7 @@ between the source (initial state) and the destination (final state).
 
 1. Download AStarVisualizer.jar from this repository's releases. <br/>
 
-   <img src="Public/Releases.png" alt="Screenshot">
+   <a href="https://github.com/SyntaxWarrior30/A-Star-Algorithm-Visualizer/releases/tag/v1.0.0"><img src="Public/Releases.png" alt="Screenshot"><a/>
 
 2. In the terminal, enter the directory where the AStarVisualizer.jar is downloaded. <br/>
 For example, all my downloaded files are inside the downloads folder, so I would enter the downloads directory.
