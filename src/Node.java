@@ -73,10 +73,12 @@ public class Node extends JButton implements ActionListener {
             disabled = false;
             setBackground(Color.WHITE);
             setForeground(Color.black);
+        } else {
+            open = false;
         }
     }
 
-    public void clearPath() {
+    public void clearOnlyPath() {
         if (!solid) {
             open = false;
             checked = false;
@@ -84,7 +86,7 @@ public class Node extends JButton implements ActionListener {
             disabled = false;
             setBackground(Color.WHITE);
             setForeground(Color.black);
-        } else if (solid) {
+        } else {
             disabled = false;
         }
     }

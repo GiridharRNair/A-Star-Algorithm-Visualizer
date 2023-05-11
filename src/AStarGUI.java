@@ -1,6 +1,8 @@
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.concurrent.Executors;
@@ -11,7 +13,6 @@ public class AStarGUI extends JPanel {
 
     static final int MIN_SPEED = 1;
     static final int MAX_SPEED = 100;
-    static final int DEFAULT_SPEED = 10;
     final int maxCol = 12;
     final int maxRow = 12;
     final int nodeSize = 50;
@@ -25,7 +26,7 @@ public class AStarGUI extends JPanel {
     JButton searchButton;
     JButton clearButton;
     JButton resetButton;
-    JSlider speedSlider;
+    MyJSlider speedSlider;
 
     Node[][] node = new Node[maxRow][maxCol];
     Node startNode, goalNode, currentNode;
@@ -60,9 +61,9 @@ public class AStarGUI extends JPanel {
         );
         description.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        speedSlider = new JSlider(JSlider.HORIZONTAL, MIN_SPEED, MAX_SPEED, DEFAULT_SPEED);
+        speedSlider = new MyJSlider();
         speedSlider.setFocusable(false);
-        Hashtable labelTable = new Hashtable();
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
         labelTable.put(  MIN_SPEED, new JLabel("Slow") );
         labelTable.put(  MAX_SPEED, new JLabel("Fast") );
         speedSlider.setLabelTable( labelTable );
@@ -163,13 +164,21 @@ public class AStarGUI extends JPanel {
 
     public void search() {
 
-        long start = System.nanoTime();
+        SoundEffect soundEffect = null;
+        try {
+            soundEffect = new SoundEffect();
+        } catch (UnsupportedAudioFileException | IOException e) {
+            e.printStackTrace();
+        }
 
+        totalfCost = 0;
+        long start = System.nanoTime();
         done = false;
         openList = new ArrayList<>();
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
+        SoundEffect finalSoundEffect = soundEffect;
         Runnable stepTask = () ->  {
             if (!goalReached) {
                 currentNode.setAsChecked();
@@ -198,6 +207,8 @@ public class AStarGUI extends JPanel {
                     done = true;
                     stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (end - start) / 1_000_000 + " ms <html>");
                     stats.setVisible(true);
+                    assert finalSoundEffect != null;
+                    finalSoundEffect.playErrorSound();
                 }
 
                 int bestNodeIndex = 0;
@@ -229,10 +240,12 @@ public class AStarGUI extends JPanel {
             if (done) {
                 stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (end - start)/ 1_000_000 + " ms" + "<br> Total F Cost: " + totalfCost + "<html>");
                 stats.setVisible(true);
+                assert finalSoundEffect != null;
+                finalSoundEffect.playSuccessSound();
             }
         };
 
-        executor.scheduleWithFixedDelay(stepTask, 0, MAX_SPEED - (speedSlider.getValue() * (MAX_SPEED - MIN_SPEED) / 100), TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay(stepTask, 0, MAX_SPEED - ((long) speedSlider.getValue() * (MAX_SPEED - MIN_SPEED) / 100), TimeUnit.MILLISECONDS);
     }
 
     private void openNode(Node node) {
@@ -281,7 +294,7 @@ public class AStarGUI extends JPanel {
     public void clearPath() {
         for (int row = 0; row < maxRow; row++) {
             for (int col = 0; col < maxCol; col++) {
-                node[row][col].clearPath();
+                node[row][col].clearOnlyPath();
             }
         }
 
