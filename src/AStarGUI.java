@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,9 +22,9 @@ public class AStarGUI extends JPanel {
     JPanel userInputPanel;
     JLabel description;
     JLabel stats;
-    JButton search;
-    JButton clear;
-    JButton reset;
+    JButton searchButton;
+    JButton clearButton;
+    JButton resetButton;
     JSlider speedSlider;
 
     Node[][] node = new Node[maxRow][maxCol];
@@ -32,7 +33,6 @@ public class AStarGUI extends JPanel {
 
     boolean done = true;
     boolean goalReached = false;
-
     int totalfCost;
 
     public AStarGUI() {
@@ -50,37 +50,42 @@ public class AStarGUI extends JPanel {
 
         description = new JLabel(
                 "<html><center>" +
-                        "The A* algorithm is a searching algorithm that is used to find the shortest" +
-                        "<br> path between an initial and a final point. It is a handy algorithm that" +
-                        "<br> is often used for map traversal to find the shortest path to be taken. " +
+                        "The A* algorithm is a powerful search algorithm used to" +
+                        "<br> efficiently find the shortest path between two points." +
+                        "<br> It is commonly applied in map traversal scenarios to " +
+                        "<br> determine the most efficient route to reach a destination." +
                         "<br><br>Click on the boxes to create obstacle nodes. <br>" +
                         "<br> Set Iteration Speed" +
                         "</center></html>"
         );
-        //description.setMaximumSize(new Dimension(Integer.MAX_VALUE, description.getPreferredSize().height));
         description.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         speedSlider = new JSlider(JSlider.HORIZONTAL, MIN_SPEED, MAX_SPEED, DEFAULT_SPEED);
-        //speedSlider.setInverted(true);
+        speedSlider.setFocusable(false);
+        Hashtable labelTable = new Hashtable();
+        labelTable.put(  MIN_SPEED, new JLabel("Slow") );
+        labelTable.put(  MAX_SPEED, new JLabel("Fast") );
+        speedSlider.setLabelTable( labelTable );
+        speedSlider.setPaintLabels(true);
 
-        search = new JButton("<html><center>Run the visualizer</center></html>");
-        search.setToolTipText("Keyboard Shortcut: Enter Key");
-        search.setSize(new Dimension(1000, 40));
-        search.addActionListener(new ButtonHandler(this));
-        search.setFocusable(false);
-        search.setAlignmentX(Component.CENTER_ALIGNMENT);
+        searchButton = new JButton("<html><center>Run the visualizer</center></html>");
+        searchButton.setToolTipText("Keyboard Shortcut: Enter Key");
+        searchButton.setSize(new Dimension(1000, 40));
+        searchButton.addActionListener(new ButtonHandler(this));
+        searchButton.setFocusable(false);
+        searchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        clear = new JButton("<html><center>Clear the path</center></html>");
-        clear.setToolTipText("Keyboard Shortcut: Space Key");
-        clear.addActionListener(new ButtonHandler(this));
-        clear.setFocusable(false);
-        clear.setAlignmentX(Component.CENTER_ALIGNMENT);
+        clearButton = new JButton("<html><center>Clear the path</center></html>");
+        clearButton.setToolTipText("Keyboard Shortcut: Shift Key");
+        clearButton.addActionListener(new ButtonHandler(this));
+        clearButton.setFocusable(false);
+        clearButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        reset = new JButton("<html><center>Clear entire board</center></html>");
-        reset.setToolTipText("Keyboard Shortcut: Backspace Key");
-        reset.addActionListener(new ButtonHandler(this));
-        reset.setFocusable(false);
-        reset.setAlignmentX(Component.CENTER_ALIGNMENT);
+        resetButton = new JButton("<html><center>Clear entire board</center></html>");
+        resetButton.setToolTipText("Keyboard Shortcut: Backspace Key");
+        resetButton.addActionListener(new ButtonHandler(this));
+        resetButton.setFocusable(false);
+        resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         stats = new JLabel("");
         stats.setVisible(false);
@@ -91,11 +96,11 @@ public class AStarGUI extends JPanel {
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         userInputPanel.add(speedSlider);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        userInputPanel.add(search);
+        userInputPanel.add(searchButton);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        userInputPanel.add(clear);
+        userInputPanel.add(clearButton);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        userInputPanel.add(reset);
+        userInputPanel.add(resetButton);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         userInputPanel.add(stats);
         userInputPanel.add(Box.createVerticalGlue()); // Add glue to center vertically
@@ -157,6 +162,7 @@ public class AStarGUI extends JPanel {
     }
 
     public void search() {
+
         long start = System.nanoTime();
 
         done = false;

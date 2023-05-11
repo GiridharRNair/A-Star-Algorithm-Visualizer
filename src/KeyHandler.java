@@ -14,7 +14,7 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_ENTER && !gui.goalReached) {
                 gui.search();
             }
-            if (code == KeyEvent.VK_SPACE) {
+            if (code == KeyEvent.VK_SHIFT) {
                 gui.clearPath();
             }
             if (code == KeyEvent.VK_BACK_SPACE) {
