@@ -2,9 +2,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-
     AStarGUI gui;
-
     public KeyHandler(AStarGUI gui) {
         this.gui = gui;
     }
@@ -13,10 +11,13 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if(gui.done) {
             int code = e.getKeyCode();
-            if (code == KeyEvent.VK_ENTER) {
+            if (code == KeyEvent.VK_ENTER && !gui.goalReached) {
                 gui.search();
             }
             if (code == KeyEvent.VK_SPACE) {
+                gui.clearPath();
+            }
+            if (code == KeyEvent.VK_BACK_SPACE) {
                 gui.resetNodes();
             }
         }
@@ -27,5 +28,4 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) { }
-
 }
