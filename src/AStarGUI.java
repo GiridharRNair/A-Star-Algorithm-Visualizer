@@ -1,3 +1,11 @@
+/**
+ * A GUI class that visualizes the A* algorithm for pathfinding on a 2D grid.
+ * Click on the boxes to create obstacle nodes.
+ * Set iteration speed using slider.
+ *
+ * @author Giridhar Nair
+ */
+
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,27 +19,35 @@ import java.util.concurrent.TimeUnit;
 
 public class AStarGUI extends JPanel {
 
+    // class constants for grid size, node size, and screen size
     static final int MIN_SPEED = 1;
     static final int MAX_SPEED = 100;
     final int maxCol = 12, maxRow = 12, nodeSize = 50, screenWidth = nodeSize * maxCol, screenHeight = nodeSize * maxRow;
 
+    // GUI components
     JPanel aStarGUI, userInputPanel;
     JLabel description, stats;
     JButton searchButton, clearButton, resetButton, pauseResumeButton;
     MyJSlider speedSlider;
 
+    // 2D array to hold all nodes in the grid
     Node[][] node = new Node[maxRow][maxCol];
+    // startNode and goalNode are Nodes representing the start point and goal point
     Node startNode, goalNode, currentNode;
+    // openList contains all Nodes that were checked and are not solid
     ArrayList<Node> openList;
 
+    // Flags to keep track of algorithm status
     boolean done = true;
     boolean goalReached = false;
     boolean pause = false;
     int totalfCost;
 
+    /**
+     * Constructor to build the GUI
+     * Sets up the 2D grid of Nodes, initializes the start and goal Nodes, and sets heuristics on all nodes
+     */
     public AStarGUI() {
-
-        totalfCost = 0;
 
         aStarGUI = new JPanel(new GridLayout(maxRow, maxCol));
         aStarGUI.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -54,7 +70,7 @@ public class AStarGUI extends JPanel {
         );
         description.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        speedSlider = new MyJSlider(MAX_SPEED, MIN_SPEED);
+        speedSlider = new MyJSlider(MIN_SPEED, MAX_SPEED);
         speedSlider.setFocusable(false);
         Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
         labelTable.put(  MIN_SPEED, new JLabel("Slow") );

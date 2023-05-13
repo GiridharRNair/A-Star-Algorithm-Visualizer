@@ -11,9 +11,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //Create the A* Visualizer object
-        AStarGUI aStarVisualizer = new AStarGUI();
-
         //Use FlatDarkLaf look and feel
         try {
             UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarkLaf");
@@ -29,7 +26,7 @@ public class Main {
         window.setResizable(false);
         window.setLayout(new FlowLayout());
 
-        //Load icon image and set as taskbar icon (if on MacOS) and window icon
+        //Load icon image and set as taskbar icon (if on macOS) and window icon
         final Image image = Toolkit.getDefaultToolkit().getImage(Main.class.getClassLoader().getResource("AStarIcon.png"));
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             final Taskbar taskbar = Taskbar.getTaskbar();
@@ -39,7 +36,7 @@ public class Main {
 
         //Set window background and add an AStarGUI object
         window.setBackground(Color.BLACK);
-        window.add(aStarVisualizer);
+        window.add(new AStarGUI());
         window.add(Box.createVerticalGlue());
 
         //Pack and center window, then make visible

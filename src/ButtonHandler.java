@@ -25,24 +25,29 @@ public class ButtonHandler implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+
         // If the search is done
         if(gui.done) {
+
             // If searchButton is clicked and goal has not been reached
             if (e.getSource() == gui.searchButton && !gui.goalReached) {
                 gui.search(); // Call search method in the AStarGUI
-            } else if (e.getSource() == gui.clearButton) { // If clearButton is clicked
+            }
+            else if (e.getSource() == gui.clearButton) { // If clearButton is clicked
                 gui.clearPath(); // Call clearPath method in the AStarGUI
-            } else if (e.getSource() == gui.resetButton) { // If resetButton is clicked
+            }
+            else if (e.getSource() == gui.resetButton) { // If resetButton is clicked
                 gui.resetNodes(); // Call resetNodes method in the AStarGUI
             }
+
         } else if(e.getSource() == gui.pauseResumeButton) { // If pauseResumeButton is clicked
+
             if (gui.pause) { // If pause is true
-                // Set text to "Pause"
-                gui.pauseResumeButton.setText("<html><center>Pause</center></html>");
+                gui.pauseResumeButton.setText("<html><center>Pause</center></html>"); // Set text to "Pause"
             } else {
-                // Set text to "Resume"
-                gui.pauseResumeButton.setText("<html><center>Resume</center></html>");
+                gui.pauseResumeButton.setText("<html><center>Resume</center></html>"); // Set text to "Resume"
             }
+
             // Toggle pause
             gui.pause = !gui.pause;
         }
