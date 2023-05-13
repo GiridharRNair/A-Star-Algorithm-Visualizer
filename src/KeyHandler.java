@@ -9,8 +9,8 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        int code = e.getKeyCode();
         if(gui.done) {
-            int code = e.getKeyCode();
             if (code == KeyEvent.VK_ENTER && !gui.goalReached) {
                 gui.search();
             }
@@ -20,6 +20,14 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_BACK_SPACE) {
                 gui.resetNodes();
             }
+        }
+        else if(code == KeyEvent.VK_SPACE) {
+            if (gui.pause) {
+                gui.pauseResumeButton.setText("<html><center>Pause</center></html>");
+            } else {
+                gui.pauseResumeButton.setText("<html><center>Resume</center></html>");
+            }
+            gui.pause = !gui.pause;
         }
     }
 

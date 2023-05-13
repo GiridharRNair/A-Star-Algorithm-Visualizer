@@ -13,19 +13,11 @@ public class AStarGUI extends JPanel {
 
     static final int MIN_SPEED = 1;
     static final int MAX_SPEED = 100;
-    final int maxCol = 12;
-    final int maxRow = 12;
-    final int nodeSize = 50;
-    final int screenWidth = nodeSize * maxCol;
-    final int screenHeight = nodeSize * maxRow;
+    final int maxCol = 12, maxRow = 12, nodeSize = 50, screenWidth = nodeSize * maxCol, screenHeight = nodeSize * maxRow;
 
-    JPanel aStarGUI;
-    JPanel userInputPanel;
-    JLabel description;
-    JLabel stats;
-    JButton searchButton;
-    JButton clearButton;
-    JButton resetButton;
+    JPanel aStarGUI, userInputPanel;
+    JLabel description, stats;
+    JButton searchButton, clearButton, resetButton, pauseResumeButton;
     MyJSlider speedSlider;
 
     Node[][] node = new Node[maxRow][maxCol];
@@ -34,6 +26,7 @@ public class AStarGUI extends JPanel {
 
     boolean done = true;
     boolean goalReached = false;
+    boolean pause = false;
     int totalfCost;
 
     public AStarGUI() {
@@ -61,7 +54,7 @@ public class AStarGUI extends JPanel {
         );
         description.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        speedSlider = new MyJSlider();
+        speedSlider = new MyJSlider(MAX_SPEED, MIN_SPEED);
         speedSlider.setFocusable(false);
         Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
         labelTable.put(  MIN_SPEED, new JLabel("Slow") );
@@ -88,6 +81,12 @@ public class AStarGUI extends JPanel {
         resetButton.setFocusable(false);
         resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        pauseResumeButton = new JButton("<html><center>Pause</center></html>");
+        pauseResumeButton.setToolTipText("Keyboard Shortcut: Space Key");
+        pauseResumeButton.addActionListener(new ButtonHandler(this));
+        pauseResumeButton.setFocusable(false);
+        pauseResumeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         stats = new JLabel("");
         stats.setVisible(false);
         stats.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -102,6 +101,8 @@ public class AStarGUI extends JPanel {
         userInputPanel.add(clearButton);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         userInputPanel.add(resetButton);
+        userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        userInputPanel.add(pauseResumeButton);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         userInputPanel.add(stats);
         userInputPanel.add(Box.createVerticalGlue()); // Add glue to center vertically
@@ -163,6 +164,7 @@ public class AStarGUI extends JPanel {
     }
 
     public void search() {
+        disableAllButtons();
 
         SoundEffect soundEffect = null;
         try {
@@ -179,8 +181,9 @@ public class AStarGUI extends JPanel {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
         SoundEffect finalSoundEffect = soundEffect;
+
         Runnable stepTask = () ->  {
-            if (!goalReached) {
+            if (!goalReached && !pause) {
                 currentNode.setAsChecked();
                 openList.remove(currentNode);
 
@@ -225,17 +228,13 @@ public class AStarGUI extends JPanel {
                     }
                 }
                 currentNode = openList.get(bestNodeIndex);
-
-                if (currentNode == goalNode) {
-                    goalReached = true;
-                    trackThePath();
-                    executor.shutdown(); // Stop the algorithm after reaching the goal node
-                }
-
-            } else {
-                executor.shutdown();
-                // Stop the algorithm after reaching the maximum steps
             }
+            if (currentNode == goalNode) {
+                goalReached = true;
+                trackThePath();
+                executor.shutdown(); // Stop the algorithm after reaching the goal node
+            }
+
             long end = System.nanoTime();
             if (done) {
                 stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (end - start)/ 1_000_000 + " ms" + "<br> Total F Cost: " + totalfCost + "<html>");
@@ -245,12 +244,11 @@ public class AStarGUI extends JPanel {
             }
         };
 
-        executor.scheduleWithFixedDelay(stepTask, 0, MAX_SPEED - ((long) speedSlider.getValue() * (MAX_SPEED - MIN_SPEED) / 100), TimeUnit.MILLISECONDS);
-    }
+        executor.scheduleWithFixedDelay(stepTask, 0, MAX_SPEED - ((long) speedSlider.getValue() * (MAX_SPEED - MIN_SPEED) / 100), TimeUnit.MILLISECONDS);    }
 
     private void openNode(Node node) {
         if (!node.open && !node.checked && !node.solid) {
-            node.setAsOpen();
+            node.open = true;
             node.parent = currentNode;
             openList.add(node);
         }
@@ -266,7 +264,7 @@ public class AStarGUI extends JPanel {
             }
         }
 
-        disableAllButtons();
+
         done = true;
     }
 
