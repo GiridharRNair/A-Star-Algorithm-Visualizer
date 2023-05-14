@@ -30,22 +30,22 @@ public class ButtonHandler implements ActionListener {
         if(gui.done) {
 
             // If searchButton is clicked and goal has not been reached
-            if (e.getSource() == gui.searchButton && !gui.goalReached) {
+            if (e.getSource() == Main.searchButton && !gui.goalReached) {
                 gui.search(); // Call search method in the AStarGUI
             }
-            else if (e.getSource() == gui.clearButton) { // If clearButton is clicked
-                gui.clearPath(); // Call clearPath method in the AStarGUI
+            else if (e.getSource() == Main.clearButton) { // If clearButton is clicked
+                gui.clearPathOnly(); // Call clearPath method in the AStarGUI
             }
-            else if (e.getSource() == gui.resetButton) { // If resetButton is clicked
-                gui.resetNodes(); // Call resetNodes method in the AStarGUI
+            else if (e.getSource() == Main.resetButton) { // If resetButton is clicked
+                gui.clearBoard(); // Call resetNodes method in the AStarGUI
             }
 
-        } else if(e.getSource() == gui.pauseResumeButton) { // If pauseResumeButton is clicked
+        } else if(e.getSource() == Main.pauseResumeButton) { // If pauseResumeButton is clicked
 
             if (gui.pause) { // If pause is true
-                gui.pauseResumeButton.setText("<html><center>Pause</center></html>"); // Set text to "Pause"
+                Main.pauseResumeButton.setText("<html><center>Pause</center></html>"); // Set text to "Pause"
             } else {
-                gui.pauseResumeButton.setText("<html><center>Resume</center></html>"); // Set text to "Resume"
+                Main.pauseResumeButton.setText("<html><center>Resume</center></html>"); // Set text to "Resume"
             }
 
             // Toggle pause

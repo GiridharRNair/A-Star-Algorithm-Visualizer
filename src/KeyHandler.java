@@ -39,12 +39,12 @@ public class KeyHandler implements KeyListener {
 
             // If Shift key is pressed, clear the current path
             if (code == KeyEvent.VK_SHIFT) {
-                gui.clearPath();
+                gui.clearPathOnly();
             }
 
             // If Backspace key is pressed, clear the whole board
             if (code == KeyEvent.VK_BACK_SPACE) {
-                gui.resetNodes();
+                gui.clearBoard();
             }
         }
         // Otherwise, if the space bar is pressed, toggle pause state
@@ -52,9 +52,9 @@ public class KeyHandler implements KeyListener {
 
             // Update the GUI button text accordingly
             if (gui.pause) {
-                gui.pauseResumeButton.setText("<html><center>Pause</center></html>");
+                Main.pauseResumeButton.setText("<html><center>Pause</center></html>");
             } else {
-                gui.pauseResumeButton.setText("<html><center>Resume</center></html>");
+                Main.pauseResumeButton.setText("<html><center>Resume</center></html>");
             }
             gui.pause = !gui.pause;
         }
