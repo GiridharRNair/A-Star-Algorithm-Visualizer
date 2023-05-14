@@ -19,6 +19,7 @@ public class Main {
     public static JButton clearButton;
     public static JButton resetButton;
     public static JButton pauseResumeButton;
+    public static JButton stopSearchButton;
 
     public static void main(String[] args) {
 
@@ -98,6 +99,12 @@ public class Main {
         pauseResumeButton.setFocusable(false);
         pauseResumeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        stopSearchButton = new JButton("<html><center>Stop Search</center></html>");
+        stopSearchButton.setToolTipText("Keyboard Shortcut: X Key");
+        stopSearchButton.addActionListener(new ButtonHandler(aStar));
+        stopSearchButton.setFocusable(false);
+        stopSearchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         stats = new JLabel((String) null);
         stats.setVisible(false);
         stats.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -113,6 +120,8 @@ public class Main {
         userInputPanel.add(resetButton);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         userInputPanel.add(pauseResumeButton);
+        userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        userInputPanel.add(stopSearchButton);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         userInputPanel.add(stats);
 

@@ -33,7 +33,7 @@ public class AStarGUI extends JPanel {
     ArrayList<Node> openList;
 
     // Flags to keep track of algorithm status
-    boolean done = true, goalReached = false, pause = false;
+    boolean done = true, goalReached = false, pause = false, cancel;
     int totalfCost;
 
     /**
@@ -125,61 +125,68 @@ public class AStarGUI extends JPanel {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(); // Create a single thread executor
 
         Runnable stepTask = () ->  {
-            if (!goalReached && !pause) { // If the goal has not been reached and pause has not been pressed
-                currentNode.setAsChecked(); // Set the current node as checked
-                openList.remove(currentNode); // Remove the current node from the open list
+            if (!cancel) {
+                if (!goalReached && !pause) { // If the goal has not been reached and pause has not been pressed
+                    currentNode.setAsChecked(); // Set the current node as checked
+                    openList.remove(currentNode); // Remove the current node from the open list
 
-                // Find neighbors of the current node and add them to the open list if they are not already open, checked, or solid
-                int row = currentNode.row;
-                int col = currentNode.col;
-                if (row - 1 >= 0) {
-                    openNode(node[row - 1][col]);
-                }
-                if (row + 1 < maxRow) {
-                    openNode(node[row + 1][col]);
-                }
-                if (col - 1 >= 0) {
-                    openNode(node[row][col - 1]);
-                }
-                if (col + 1 < maxRow) {
-                    openNode(node[row][col + 1]);
-                }
+                    // Find neighbors of the current node and add them to the open list if they are not already open, checked, or solid
+                    int row = currentNode.row;
+                    int col = currentNode.col;
+                    if (row - 1 >= 0) {
+                        openNode(node[row - 1][col]);
+                    }
+                    if (row + 1 < maxRow) {
+                        openNode(node[row + 1][col]);
+                    }
+                    if (col - 1 >= 0) {
+                        openNode(node[row][col - 1]);
+                    }
+                    if (col + 1 < maxRow) {
+                        openNode(node[row][col + 1]);
+                    }
 
-                if (openList.isEmpty()) { // If the open list is empty, there is no path
-                    executor.shutdown(); // Shutdown the executor
-                    done = true; // Set done flag to true
-                    Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start) / 1_000_000 + " ms <html>");
-                    Main.stats.setVisible(true); // Update stats label and make it visible
-                    assert finalSoundEffect != null;
-                    finalSoundEffect.playErrorSound(); // Play error sound
-                }
+                    if (openList.isEmpty()) { // If the open list is empty, there is no path
+                        executor.shutdown(); // Shutdown the executor
+                        done = true; // Set done flag to true
+                        Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start) / 1_000_000 + " ms <html>");
+                        Main.stats.setVisible(true); // Update stats label and make it visible
+                        assert finalSoundEffect != null;
+                        finalSoundEffect.playErrorSound(); // Play error sound
+                    }
 
-                // Select the best node to explore next based on its f cost (if there are nodes with equal f costs, choose the one with lower g cost)
-                int bestNodeIndex = 0;
-                int bestNodefCost = Integer.MAX_VALUE;
-                for (int i = 0; i < openList.size(); i++) {
-                    if (openList.get(i).fCost < bestNodefCost) {
-                        bestNodeIndex = i;
-                        bestNodefCost = openList.get(i).fCost;
-                    } else if (openList.get(i).fCost == bestNodefCost) {
-                        if (openList.get(i).gCost < openList.get(bestNodeIndex).gCost) {
+                    // Select the best node to explore next based on its f cost (if there are nodes with equal f costs, choose the one with lower g cost)
+                    int bestNodeIndex = 0;
+                    int bestNodefCost = Integer.MAX_VALUE;
+                    for (int i = 0; i < openList.size(); i++) {
+                        if (openList.get(i).fCost < bestNodefCost) {
                             bestNodeIndex = i;
+                            bestNodefCost = openList.get(i).fCost;
+                        } else if (openList.get(i).fCost == bestNodefCost) {
+                            if (openList.get(i).gCost < openList.get(bestNodeIndex).gCost) {
+                                bestNodeIndex = i;
+                            }
                         }
                     }
+                    currentNode = openList.get(bestNodeIndex); // Set the current node to the selected node
                 }
-                currentNode = openList.get(bestNodeIndex); // Set the current node to the selected node
-            }
-            if (currentNode == goalNode) { // If the goal node has been reached
-                goalReached = true; // Set the goalReached flag to true
-                trackThePath(); // Trace back the path
-                executor.shutdown(); // Stop the algorithm after reaching the goal node
-            }
+                if (currentNode == goalNode) { // If the goal node has been reached
+                    goalReached = true; // Set the goalReached flag to true
+                    trackThePath(); // Trace back the path
+                    executor.shutdown(); // Stop the algorithm after reaching the goal node
+                }
 
-            if (done) { // If the search is complete
-                Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total F Cost: " + totalfCost + "<html>");
-                Main.stats.setVisible(true); // Update and make stats label visible
-                assert finalSoundEffect != null;
-                finalSoundEffect.playSuccessSound(); // Play success sound
+                if (done) { // If the search is complete
+                    Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total F Cost: " + totalfCost + "<html>");
+                    Main.stats.setVisible(true); // Update and make stats label visible
+                    assert finalSoundEffect != null;
+                    finalSoundEffect.playSuccessSound(); // Play success sound
+                }
+            } else {
+                executor.shutdown();
+                done = true;
+                cancel = false;
+                clearBoard();
             }
         };
         // Schedule the stepTask to execute periodically based on the current speed setting

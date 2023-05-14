@@ -48,7 +48,7 @@ public class KeyHandler implements KeyListener {
             }
         }
         // Otherwise, if the space bar is pressed, toggle pause state
-        else if(code == KeyEvent.VK_SPACE) {
+        else if (code == KeyEvent.VK_SPACE){
 
             // Update the GUI button text accordingly
             if (gui.pause) {
@@ -57,6 +57,10 @@ public class KeyHandler implements KeyListener {
                 Main.pauseResumeButton.setText("<html><center>Resume</center></html>");
             }
             gui.pause = !gui.pause;
+        }
+        else if (code == KeyEvent.VK_X) {
+            gui.cancel = true;
+            gui.pause = false;
         }
     }
 

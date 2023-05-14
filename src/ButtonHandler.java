@@ -5,6 +5,7 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class ButtonHandler implements ActionListener {
 
@@ -50,6 +51,11 @@ public class ButtonHandler implements ActionListener {
 
             // Toggle pause
             gui.pause = !gui.pause;
+        }
+        else if (e.getSource() == Main.stopSearchButton) {
+            gui.cancel = true;
+            gui.pause = false;
+            Main.pauseResumeButton.setText("<html><center>Pause</center></html>"); // Set text to "Pause"
         }
     }
 }
