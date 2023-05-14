@@ -1,6 +1,6 @@
 # A* Algorithm Visualizer
 
-<img src="Public/AStarVisualizerGif.gif" alt="Screenshot">
+<img src="Public/AStarVisualizer.gif" alt="Screenshot">
 
 ## Introduction
 
@@ -13,6 +13,7 @@ between the source (initial state) and the destination (final state).
 - Interactive grid-based environment
 - Place obstacles on the grid
 - Visualize the A* algorithm in action
+- Pause and resume the visualization
 - Modify the iteration speed
 - See optimal path highlighted
 
