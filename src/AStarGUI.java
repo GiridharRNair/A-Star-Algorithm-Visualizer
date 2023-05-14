@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class AStarGUI extends JPanel {
 
     // Class constants for grid size, node size, and screen size
+
     static final int MIN_SPEED = 1;
     static final int MAX_SPEED = 100;
     final int maxCol = 12, maxRow = 12, nodeSize = 50, screenWidth = nodeSize * maxCol, screenHeight = nodeSize * maxRow;
@@ -41,6 +42,7 @@ public class AStarGUI extends JPanel {
      * Sets up the 2D grid of Nodes, initializes the start and goal Nodes, and sets heuristics on all nodes
      */
     public AStarGUI() {
+
         aStarGUI = new JPanel(new GridLayout(maxRow, maxCol));
         aStarGUI.setPreferredSize(new Dimension(screenWidth, screenHeight));
 
@@ -107,6 +109,9 @@ public class AStarGUI extends JPanel {
      * Disables all buttons to prevent interference with the algorithm.
      */
     public void search() {
+
+        Main.speedSlider.setEnabled(false);
+
         disableAllButtons(); // Disable all buttons to prevent interference with the algorithm
 
         // Instantiate a SoundEffect object to play success/failure sounds when the search is complete
@@ -147,12 +152,13 @@ public class AStarGUI extends JPanel {
                     }
 
                     if (openList.isEmpty()) { // If the open list is empty, there is no path
-                        executor.shutdown(); // Shutdown the executor
-                        done = true; // Set done flag to true
+                        executor.shutdown();
+                        done = true;
                         Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start) / 1_000_000 + " ms <html>");
-                        Main.stats.setVisible(true); // Update stats label and make it visible
+                        Main.stats.setVisible(true);
                         assert finalSoundEffect != null;
-                        finalSoundEffect.playErrorSound(); // Play error sound
+                        finalSoundEffect.playErrorSound();
+                        Main.speedSlider.setEnabled(true);
                     }
 
                     // Select the best node to explore next based on its f cost (if there are nodes with equal f costs, choose the one with lower g cost)
@@ -170,26 +176,29 @@ public class AStarGUI extends JPanel {
                     }
                     currentNode = openList.get(bestNodeIndex); // Set the current node to the selected node
                 }
+
                 if (currentNode == goalNode) { // If the goal node has been reached
-                    goalReached = true; // Set the goalReached flag to true
-                    trackThePath(); // Trace back the path
-                    executor.shutdown(); // Stop the algorithm after reaching the goal node
+                    goalReached = true;
+                    trackThePath();
+                    executor.shutdown();
                 }
 
                 if (done) { // If the search is complete
                     Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total F Cost: " + totalfCost + "<html>");
-                    Main.stats.setVisible(true); // Update and make stats label visible
+                    Main.stats.setVisible(true);
                     assert finalSoundEffect != null;
-                    finalSoundEffect.playSuccessSound(); // Play success sound
+                    finalSoundEffect.playSuccessSound();
                 }
-            } else {
+            } else { // If the user aborts the search
                 executor.shutdown();
                 done = true;
                 cancel = false;
-                clearBoard();
+                clearPathOnly();
+                Main.speedSlider.setEnabled(true);
             }
         };
         // Schedule the stepTask to execute periodically based on the current speed setting
+        System.out.println(Main.speedSlider.getMaximum());
         executor.scheduleWithFixedDelay(stepTask, 0, MAX_SPEED - ((long) Main.speedSlider.getValue() * (MAX_SPEED - MIN_SPEED) / 100), TimeUnit.MILLISECONDS);
     }
 
@@ -209,21 +218,30 @@ public class AStarGUI extends JPanel {
      * Helper method to track and display the path from the goal node to the start node
      */
     private void trackThePath() {
-        totalfCost = 0; // Reset the total f-cost for each traversal
-        currentNode = goalNode; // Start at the goal node
-        try {
-            Thread.sleep(100); // Pause thread for 100 milliseconds to slow down the path visualization
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        while(currentNode != startNode) { // Traverse backwards from the goal node to the start node
-            currentNode = currentNode.parent; // Move to the parent of the current node
-            if (currentNode != startNode) { // If the current node is not the start node, set it as part of the path
+        totalfCost = 0;
+        currentNode = goalNode;
+        while(currentNode != startNode) {
+            currentNode = currentNode.parent;
+
+            try {
+                Thread.sleep(Main.speedSlider.getMaximum() - ((long) Main.speedSlider.getValue() * (Main.speedSlider.getMaximum() - Main.speedSlider.getMinimum()) / 100)); // Pause thread for 100 milliseconds to slow down the path visualization
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (currentNode != startNode) {
                 currentNode.setAsPath();
-                totalfCost += currentNode.fCost; // Add the f-cost of the current node to the total f-cost
+                totalfCost += currentNode.fCost;
             }
         }
         done = true; // Path tracking is complete
+        Main.speedSlider.setEnabled(true);
+
+        Main.searchButton.setEnabled(true);
+        Main.clearButton.setEnabled(true);
+        Main.resetButton.setEnabled(true);
+        Main.pauseResumeButton.setEnabled(false);
+        Main.stopSearchButton.setEnabled(false);
     }
 
     /**

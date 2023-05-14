@@ -26,41 +26,52 @@ public class KeyHandler implements KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent e) {
-
         int code = e.getKeyCode();
-
-        // Only respond to keys if the search is completed
         if(gui.done) {
-
-            // If Enter key is pressed and goal has not been reached, initiate a new search
             if (code == KeyEvent.VK_ENTER && !gui.goalReached) {
                 gui.search();
-            }
 
-            // If Shift key is pressed, clear the current path
+                Main.searchButton.setEnabled(false);
+                Main.clearButton.setEnabled(false);
+                Main.resetButton.setEnabled(false);
+                Main.pauseResumeButton.setEnabled(true);
+                Main.stopSearchButton.setEnabled(true);
+            }
             if (code == KeyEvent.VK_SHIFT) {
                 gui.clearPathOnly();
-            }
 
-            // If Backspace key is pressed, clear the whole board
+                Main.searchButton.setEnabled(true);
+                Main.clearButton.setEnabled(false);
+                Main.resetButton.setEnabled(true);
+                Main.pauseResumeButton.setEnabled(false);
+                Main.stopSearchButton.setEnabled(false);
+            }
             if (code == KeyEvent.VK_BACK_SPACE) {
                 gui.clearBoard();
-            }
-        }
-        // Otherwise, if the space bar is pressed, toggle pause state
-        else if (code == KeyEvent.VK_SPACE){
 
-            // Update the GUI button text accordingly
+                Main.searchButton.setEnabled(true);
+                Main.clearButton.setEnabled(false);
+                Main.resetButton.setEnabled(false);
+                Main.pauseResumeButton.setEnabled(false);
+                Main.stopSearchButton.setEnabled(false);
+            }
+        } else if (code == KeyEvent.VK_SPACE){
             if (gui.pause) {
                 Main.pauseResumeButton.setText("<html><center>Pause</center></html>");
             } else {
                 Main.pauseResumeButton.setText("<html><center>Resume</center></html>");
             }
             gui.pause = !gui.pause;
-        }
-        else if (code == KeyEvent.VK_X) {
+        } else if (code == KeyEvent.VK_X) {
             gui.cancel = true;
             gui.pause = false;
+            Main.pauseResumeButton.setText("<html><center>Pause</center></html>");
+
+            Main.searchButton.setEnabled(true);
+            Main.clearButton.setEnabled(false);
+            Main.resetButton.setEnabled(true);
+            Main.pauseResumeButton.setEnabled(false);
+            Main.stopSearchButton.setEnabled(false);
         }
     }
 

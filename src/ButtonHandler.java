@@ -5,7 +5,6 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 public class ButtonHandler implements ActionListener {
 
@@ -26,36 +25,51 @@ public class ButtonHandler implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        // If the search is done
         if(gui.done) {
-
-            // If searchButton is clicked and goal has not been reached
             if (e.getSource() == Main.searchButton && !gui.goalReached) {
-                gui.search(); // Call search method in the AStarGUI
-            }
-            else if (e.getSource() == Main.clearButton) { // If clearButton is clicked
-                gui.clearPathOnly(); // Call clearPath method in the AStarGUI
-            }
-            else if (e.getSource() == Main.resetButton) { // If resetButton is clicked
-                gui.clearBoard(); // Call resetNodes method in the AStarGUI
-            }
+                gui.search();
 
-        } else if(e.getSource() == Main.pauseResumeButton) { // If pauseResumeButton is clicked
+                Main.searchButton.setEnabled(false);
+                Main.clearButton.setEnabled(false);
+                Main.resetButton.setEnabled(false);
+                Main.pauseResumeButton.setEnabled(true);
+                Main.stopSearchButton.setEnabled(true);
+            }
+            else if (e.getSource() == Main.clearButton) {
+                gui.clearPathOnly();
 
-            if (gui.pause) { // If pause is true
-                Main.pauseResumeButton.setText("<html><center>Pause</center></html>"); // Set text to "Pause"
+                Main.searchButton.setEnabled(true);
+                Main.clearButton.setEnabled(false);
+                Main.resetButton.setEnabled(true);
+                Main.pauseResumeButton.setEnabled(false);
+                Main.stopSearchButton.setEnabled(false);
+            }
+            else if (e.getSource() == Main.resetButton) {
+                gui.clearBoard();
+
+                Main.searchButton.setEnabled(true);
+                Main.clearButton.setEnabled(false);
+                Main.resetButton.setEnabled(false);
+                Main.pauseResumeButton.setEnabled(false);
+                Main.stopSearchButton.setEnabled(false);
+            }
+        } else if(e.getSource() == Main.pauseResumeButton) {
+            if (gui.pause) {
+                Main.pauseResumeButton.setText("<html><center>Pause</center></html>");
             } else {
-                Main.pauseResumeButton.setText("<html><center>Resume</center></html>"); // Set text to "Resume"
+                Main.pauseResumeButton.setText("<html><center>Resume</center></html>");
             }
-
-            // Toggle pause
             gui.pause = !gui.pause;
-        }
-        else if (e.getSource() == Main.stopSearchButton) {
+        } else if (e.getSource() == Main.stopSearchButton) {
             gui.cancel = true;
             gui.pause = false;
-            Main.pauseResumeButton.setText("<html><center>Pause</center></html>"); // Set text to "Pause"
+            Main.pauseResumeButton.setText("<html><center>Pause</center></html>");
+
+            Main.searchButton.setEnabled(true);
+            Main.clearButton.setEnabled(false);
+            Main.resetButton.setEnabled(true);
+            Main.pauseResumeButton.setEnabled(false);
+            Main.stopSearchButton.setEnabled(false);
         }
     }
 }

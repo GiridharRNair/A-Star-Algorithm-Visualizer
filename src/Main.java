@@ -81,7 +81,7 @@ public class Main {
         searchButton.setFocusable(false);
         searchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        clearButton = new JButton("<html><center>Clear the path</center></html>");
+        clearButton = new JButton("<html><center>Clear the path only</center></html>");
         clearButton.setToolTipText("Keyboard Shortcut: Shift Key");
         clearButton.addActionListener(new ButtonHandler(aStar));
         clearButton.setFocusable(false);
@@ -99,7 +99,7 @@ public class Main {
         pauseResumeButton.setFocusable(false);
         pauseResumeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        stopSearchButton = new JButton("<html><center>Stop Search</center></html>");
+        stopSearchButton = new JButton("<html><center>Stop</center></html>");
         stopSearchButton.setToolTipText("Keyboard Shortcut: X Key");
         stopSearchButton.addActionListener(new ButtonHandler(aStar));
         stopSearchButton.setFocusable(false);
@@ -108,6 +108,11 @@ public class Main {
         stats = new JLabel((String) null);
         stats.setVisible(false);
         stats.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        Main.clearButton.setEnabled(false);
+        Main.resetButton.setEnabled(false);
+        Main.pauseResumeButton.setEnabled(false);
+        Main.stopSearchButton.setEnabled(false);
 
         userInputPanel.add(description);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
