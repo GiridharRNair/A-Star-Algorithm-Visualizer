@@ -51,8 +51,16 @@ public class SoundEffect {
      */
     private void playSoundHelper(AudioInputStream audio) throws LineUnavailableException, IOException {
         Clip clip = AudioSystem.getClip();
-        clip.open(audio);
-        clip.start();
+        if (audio == errorSound) {
+            clip.open(audio);
+            FloatControl gainControl =
+                    (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-15.0f);
+            clip.start();
+        } else {
+            clip.open(audio);
+            clip.start();
+        }
         clip.addLineListener(event -> {
             if (event.getType() == LineEvent.Type.STOP) {
                 clip.close();

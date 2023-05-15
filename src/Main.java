@@ -100,7 +100,7 @@ public class Main {
         pauseResumeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         stopSearchButton = new JButton("<html><center>Stop</center></html>");
-        stopSearchButton.setToolTipText("Keyboard Shortcut: X Key");
+        stopSearchButton.setToolTipText("Keyboard Shortcut: Backspace Key");
         stopSearchButton.addActionListener(new ButtonHandler(aStar));
         stopSearchButton.setFocusable(false);
         stopSearchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
