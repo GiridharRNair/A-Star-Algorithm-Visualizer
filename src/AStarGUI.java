@@ -35,7 +35,7 @@ public class AStarGUI extends JPanel {
 
     // Flags to keep track of algorithm status
     boolean done = true, goalReached = false, pause = false, cancel;
-    int totalfCost;
+    int totalHCost;
 
     /**
      * Constructor to build the GUI
@@ -190,7 +190,7 @@ public class AStarGUI extends JPanel {
                 }
 
                 if (done) { // If the search is complete
-                    Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total F Cost: " + totalfCost + "<html>");
+                    Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total H Cost: " + totalHCost + "<html>");
                     Main.stats.setVisible(true);
                     assert finalSoundEffect != null;
                     finalSoundEffect.playSuccessSound();
@@ -223,7 +223,7 @@ public class AStarGUI extends JPanel {
      * Helper method to track and display the path from the goal node to the start node
      */
     private void trackThePath() {
-        totalfCost = 0;
+        totalHCost = 0;
         currentNode = goalNode;
         while(currentNode != startNode) {
             currentNode = currentNode.parent;
@@ -236,7 +236,7 @@ public class AStarGUI extends JPanel {
 
             if (currentNode != startNode) {
                 currentNode.setAsPath();
-                totalfCost += currentNode.fCost;
+                totalHCost += currentNode.fCost;
             }
         }
         done = true; // Path tracking is complete
