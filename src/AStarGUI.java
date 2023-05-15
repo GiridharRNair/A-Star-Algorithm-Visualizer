@@ -167,20 +167,18 @@ public class AStarGUI extends JPanel {
                         Main.stopSearchButton.setEnabled(false);
                     }
 
-                    // Select the best node to explore next based on its f cost (if there are nodes with equal f costs, choose the one with lower g cost)
                     int bestNodeIndex = 0;
                     int bestNodefCost = Integer.MAX_VALUE;
+                    int currentNodeCost = currentNode.gCost; // New variable to store the cost of reaching the current node
                     for (int i = 0; i < openList.size(); i++) {
-                        if (openList.get(i).fCost < bestNodefCost) {
+                        if ((openList.get(i).fCost + openList.get(i).gCost == bestNodefCost + currentNodeCost &&
+                                openList.get(i).gCost < openList.get(bestNodeIndex).gCost) || openList.get(i).fCost + openList.get(i).gCost < bestNodefCost + currentNodeCost) {
                             bestNodeIndex = i;
                             bestNodefCost = openList.get(i).fCost;
-                        } else if (openList.get(i).fCost == bestNodefCost) {
-                            if (openList.get(i).gCost < openList.get(bestNodeIndex).gCost) {
-                                bestNodeIndex = i;
-                            }
                         }
                     }
                     currentNode = openList.get(bestNodeIndex); // Set the current node to the selected node
+
                 }
 
                 if (currentNode == goalNode) { // If the goal node has been reached
