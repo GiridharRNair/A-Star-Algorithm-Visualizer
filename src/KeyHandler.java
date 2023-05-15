@@ -69,7 +69,7 @@ public class KeyHandler implements KeyListener {
 
             Main.searchButton.setEnabled(true);
             Main.clearButton.setEnabled(false);
-            Main.resetButton.setEnabled(true);
+            Main.resetButton.setEnabled(gui.solidExist());
             Main.pauseResumeButton.setEnabled(false);
             Main.stopSearchButton.setEnabled(false);
         }
