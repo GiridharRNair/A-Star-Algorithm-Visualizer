@@ -28,7 +28,7 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         if(gui.done) {
-            if (code == KeyEvent.VK_ENTER && !gui.goalReached) {
+            if (code == KeyEvent.VK_ENTER) {
                 gui.search();
 
                 Main.searchButton.setEnabled(false);

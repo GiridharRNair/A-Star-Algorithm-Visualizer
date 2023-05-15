@@ -184,7 +184,6 @@ public class AStarGUI extends JPanel {
                 if (currentNode == goalNode) { // If the goal node has been reached
                     goalReached = true;
                     trackThePath();
-                    executor.shutdown();
                 }
 
                 if (done) { // If the search is complete
@@ -192,6 +191,7 @@ public class AStarGUI extends JPanel {
                     Main.stats.setVisible(true);
                     assert finalSoundEffect != null;
                     finalSoundEffect.playSuccessSound();
+                    executor.shutdown();
                 }
             } else { // If the user aborts the search
                 executor.shutdown();
@@ -223,28 +223,42 @@ public class AStarGUI extends JPanel {
     private void trackThePath() {
         totalHCost = 0;
         currentNode = goalNode;
-        while(currentNode != startNode) {
-            currentNode = currentNode.parent;
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        Main.pauseResumeButton.setEnabled(true);
 
-            try {
-                Thread.sleep(Main.speedSlider.getMaximum() - ((long) Main.speedSlider.getValue() * (Main.speedSlider.getMaximum() - Main.speedSlider.getMinimum()) / 100)); // Pause thread for 100 milliseconds to slow down the path visualization
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        Runnable stepTask = () -> {
+            if (!cancel) {
+                if (!pause) {
+                    if (currentNode != startNode) {
+                        currentNode = currentNode.parent;
+
+                        if (currentNode != startNode) {
+                            currentNode.setAsPath();
+                            totalHCost += currentNode.fCost;
+                        }
+                    }
+                    else {
+                        done = true; // Path tracking is complete
+                        Main.speedSlider.setEnabled(true);
+                        Main.searchButton.setEnabled(false);
+                        Main.clearButton.setEnabled(true);
+                        Main.resetButton.setEnabled(solidExist());
+                        Main.pauseResumeButton.setEnabled(false);
+                        Main.stopSearchButton.setEnabled(false);
+                        executor.shutdown();
+                    }
+                }
+            } else { // If the user aborts the search
+                executor.shutdown();
+                done = true;
+                cancel = false;
+                clearPathOnly();
+                Main.speedSlider.setEnabled(true);
             }
-
-            if (currentNode != startNode) {
-                currentNode.setAsPath();
-                totalHCost += currentNode.fCost;
-            }
-        }
-        done = true; // Path tracking is complete
-        Main.speedSlider.setEnabled(true);
-
-        Main.searchButton.setEnabled(false);
-        Main.clearButton.setEnabled(true);
-        Main.resetButton.setEnabled(solidExist());
-        Main.pauseResumeButton.setEnabled(false);
-        Main.stopSearchButton.setEnabled(false);
+        };
+        executor.scheduleWithFixedDelay(stepTask, 0, MAX_SPEED - ((long) Main.speedSlider.getValue() * (MAX_SPEED - MIN_SPEED) / 100), TimeUnit.MILLISECONDS);
+        pause = false;
+        Main.pauseResumeButton.setText("<html><center>Pause</center></html>");
     }
 
     /**
