@@ -97,6 +97,7 @@ public class Node extends JButton implements ActionListener {
         disabled = false;
         setBackground(Color.WHITE);
         setForeground(Color.BLACK);
+        this.setToolTipText("");
     }
 
     /**
@@ -114,6 +115,12 @@ public class Node extends JButton implements ActionListener {
         } else {
             disabled = false;
         }
+        this.setToolTipText("");
+    }
+
+    public void disableNode() {
+        this.setToolTipText("Cannot Edit Node While Search");
+        disabled = true;
     }
 
     /**

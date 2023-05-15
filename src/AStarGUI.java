@@ -159,6 +159,12 @@ public class AStarGUI extends JPanel {
                         assert finalSoundEffect != null;
                         finalSoundEffect.playErrorSound();
                         Main.speedSlider.setEnabled(true);
+
+                        Main.searchButton.setEnabled(false);
+                        Main.clearButton.setEnabled(true);
+                        Main.resetButton.setEnabled(solidExist());
+                        Main.pauseResumeButton.setEnabled(false);
+                        Main.stopSearchButton.setEnabled(false);
                     }
 
                     // Select the best node to explore next based on its f cost (if there are nodes with equal f costs, choose the one with lower g cost)
@@ -198,7 +204,6 @@ public class AStarGUI extends JPanel {
             }
         };
         // Schedule the stepTask to execute periodically based on the current speed setting
-        System.out.println(Main.speedSlider.getMaximum());
         executor.scheduleWithFixedDelay(stepTask, 0, MAX_SPEED - ((long) Main.speedSlider.getValue() * (MAX_SPEED - MIN_SPEED) / 100), TimeUnit.MILLISECONDS);
     }
 
@@ -237,9 +242,9 @@ public class AStarGUI extends JPanel {
         done = true; // Path tracking is complete
         Main.speedSlider.setEnabled(true);
 
-        Main.searchButton.setEnabled(true);
+        Main.searchButton.setEnabled(false);
         Main.clearButton.setEnabled(true);
-        Main.resetButton.setEnabled(true);
+        Main.resetButton.setEnabled(solidExist());
         Main.pauseResumeButton.setEnabled(false);
         Main.stopSearchButton.setEnabled(false);
     }
@@ -250,7 +255,7 @@ public class AStarGUI extends JPanel {
     private void disableAllButtons() {
         for (int row = 0; row < maxRow; row++) {
             for (int col = 0; col < maxCol; col++) {
-                node[row][col].disabled = true; // Set the 'disabled' attribute of each node to true
+                node[row][col].disableNode(); // Set the 'disabled' attribute of each node to true
             }
         }
     }
@@ -281,5 +286,16 @@ public class AStarGUI extends JPanel {
         initializeGoalStartNodes(); // Re-initialize the goal and start nodes
         goalReached = false; // Reset goalReached flag to false
         Main.stats.setVisible(false); // Hide the statistics panel
+    }
+
+    public boolean solidExist() {
+        for (int row = 0; row < maxRow; row++) {
+            for (int col = 0; col < maxCol; col++) {
+                if (node[row][col].solid){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

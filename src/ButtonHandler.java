@@ -40,7 +40,7 @@ public class ButtonHandler implements ActionListener {
 
                 Main.searchButton.setEnabled(true);
                 Main.clearButton.setEnabled(false);
-                Main.resetButton.setEnabled(true);
+                Main.resetButton.setEnabled(gui.solidExist());
                 Main.pauseResumeButton.setEnabled(false);
                 Main.stopSearchButton.setEnabled(false);
             }
@@ -49,7 +49,7 @@ public class ButtonHandler implements ActionListener {
 
                 Main.searchButton.setEnabled(true);
                 Main.clearButton.setEnabled(false);
-                Main.resetButton.setEnabled(false);
+                Main.resetButton.setEnabled(gui.solidExist());
                 Main.pauseResumeButton.setEnabled(false);
                 Main.stopSearchButton.setEnabled(false);
             }
