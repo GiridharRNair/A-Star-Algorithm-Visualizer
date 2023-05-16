@@ -36,6 +36,7 @@ public class AStarGUI extends JPanel {
     // Flags to keep track of algorithm status
     boolean done = true, goalReached = false, pause = false, cancel;
     int totalHCost;
+    long start;
 
     /**
      * Constructor to build the GUI
@@ -123,7 +124,7 @@ public class AStarGUI extends JPanel {
         }
         SoundEffect finalSoundEffect = soundEffect; // Final reference to SoundEffect object to be used in the future
 
-        long start = System.nanoTime(); // Get start time of the algorithm
+        start = System.nanoTime(); // Get start time of the algorithm
         done = false;
         goalReached = false;
         openList = new ArrayList<>(); // Initialize list of open nodes
@@ -155,12 +156,11 @@ public class AStarGUI extends JPanel {
                     if (openList.isEmpty()) { // If the open list is empty, there is no path
                         executor.shutdown();
                         done = true;
-                        Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start) / 1_000_000 + " ms <html>");
-                        Main.stats.setVisible(true);
                         assert finalSoundEffect != null;
                         finalSoundEffect.playErrorSound();
                         Main.speedSlider.setEnabled(true);
-
+                        Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start) / 1_000_000 + " ms <html>");
+                        Main.stats.setVisible(true);
                         Main.searchButton.setEnabled(false);
                         Main.clearButton.setEnabled(true);
                         Main.resetButton.setEnabled(solidExist());
@@ -185,8 +185,6 @@ public class AStarGUI extends JPanel {
                 if (currentNode == goalNode) { // If the goal node has been reached
                     goalReached = true;
                     trackThePath();
-                    Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total H Cost: " + totalHCost + "<html>");
-                    Main.stats.setVisible(true);
                     assert finalSoundEffect != null;
                     finalSoundEffect.playSuccessSound();
                     executor.shutdown();
@@ -244,6 +242,8 @@ public class AStarGUI extends JPanel {
                         Main.pauseResumeButton.setEnabled(false);
                         Main.stopSearchButton.setEnabled(false);
                         executor.shutdown();
+                        Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total H Cost: " + totalHCost + "<html>");
+                        Main.stats.setVisible(true);
                     }
                 }
             } else { // If the user aborts the search
