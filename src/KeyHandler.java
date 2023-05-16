@@ -12,6 +12,8 @@ public class KeyHandler implements KeyListener {
     // A reference to the AStarGUI instance to which this KeyHandler belongs.
     AStarGUI gui;
 
+    boolean searched = false;
+
     /**
      * Constructs a new KeyHandler with the given AStarGUI instance.
      * @param gui The instance of AStarGUI to which this KeyHandler belongs.
@@ -28,9 +30,10 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         if(gui.done) {
-            if (code == KeyEvent.VK_ENTER) {
+            if (!searched && code == KeyEvent.VK_ENTER) {
                 gui.search();
 
+                searched = true;
                 Main.searchButton.setEnabled(false);
                 Main.clearButton.setEnabled(false);
                 Main.resetButton.setEnabled(false);
@@ -39,6 +42,7 @@ public class KeyHandler implements KeyListener {
             }
             if (code == KeyEvent.VK_SHIFT) {
                 gui.clearPathOnly();
+                searched = false;
 
                 Main.searchButton.setEnabled(true);
                 Main.clearButton.setEnabled(false);
@@ -46,8 +50,9 @@ public class KeyHandler implements KeyListener {
                 Main.pauseResumeButton.setEnabled(false);
                 Main.stopSearchButton.setEnabled(false);
             }
-            if (code == KeyEvent.VK_BACK_SPACE) {
+            else if (code == KeyEvent.VK_BACK_SPACE) {
                 gui.clearBoard();
+                searched = false;
 
                 Main.searchButton.setEnabled(true);
                 Main.clearButton.setEnabled(false);
@@ -63,9 +68,11 @@ public class KeyHandler implements KeyListener {
             }
             gui.pause = !gui.pause;
         } else if (code == KeyEvent.VK_BACK_SPACE) {
+            gui.clearBoard();
             gui.cancel = true;
             gui.pause = false;
             Main.pauseResumeButton.setText("<html><center>Pause</center></html>");
+            searched = false;
 
             Main.searchButton.setEnabled(true);
             Main.clearButton.setEnabled(false);

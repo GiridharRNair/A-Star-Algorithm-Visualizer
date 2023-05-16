@@ -125,6 +125,7 @@ public class AStarGUI extends JPanel {
 
         long start = System.nanoTime(); // Get start time of the algorithm
         done = false;
+        goalReached = false;
         openList = new ArrayList<>(); // Initialize list of open nodes
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(); // Create a single thread executor
@@ -184,9 +185,6 @@ public class AStarGUI extends JPanel {
                 if (currentNode == goalNode) { // If the goal node has been reached
                     goalReached = true;
                     trackThePath();
-                }
-
-                if (done) { // If the search is complete
                     Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total H Cost: " + totalHCost + "<html>");
                     Main.stats.setVisible(true);
                     assert finalSoundEffect != null;
@@ -234,7 +232,7 @@ public class AStarGUI extends JPanel {
 
                         if (currentNode != startNode) {
                             currentNode.setAsPath();
-                            totalHCost += currentNode.fCost;
+                            totalHCost += currentNode.hCost;
                         }
                     }
                     else {
@@ -249,11 +247,12 @@ public class AStarGUI extends JPanel {
                     }
                 }
             } else { // If the user aborts the search
-                executor.shutdown();
-                done = true;
                 cancel = false;
-                clearPathOnly();
                 Main.speedSlider.setEnabled(true);
+                Main.searchButton.setEnabled(true);
+                done = true;
+                clearPathOnly();
+                executor.shutdown();
             }
         };
         executor.scheduleWithFixedDelay(stepTask, 0, MAX_SPEED - ((long) Main.speedSlider.getValue() * (MAX_SPEED - MIN_SPEED) / 100), TimeUnit.MILLISECONDS);
@@ -300,6 +299,10 @@ public class AStarGUI extends JPanel {
         Main.stats.setVisible(false); // Hide the statistics panel
     }
 
+    /**
+     * Method to identify if any obstacles exit on the board.
+     * return boolean whether obstacles exist.
+     */
     public boolean solidExist() {
         for (int row = 0; row < maxRow; row++) {
             for (int col = 0; col < maxCol; col++) {
