@@ -186,7 +186,6 @@ public class AStarGUI extends JPanel {
                     goalReached = true;
                     trackThePath();
                     assert finalSoundEffect != null;
-                    finalSoundEffect.playSuccessSound();
                     executor.shutdown();
                 }
             } else { // If the user aborts the search
@@ -217,6 +216,14 @@ public class AStarGUI extends JPanel {
      * Helper method to track and display the path from the goal node to the start node
      */
     private void trackThePath() {
+        SoundEffect soundEffect = null;
+        try {
+            soundEffect = new SoundEffect();
+        } catch (UnsupportedAudioFileException | IOException e) {
+            e.printStackTrace();
+        }
+        SoundEffect finalSoundEffect = soundEffect;
+
         totalHCost = 0;
         currentNode = goalNode;
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -235,6 +242,8 @@ public class AStarGUI extends JPanel {
                     }
                     else {
                         done = true; // Path tracking is complete
+                        assert finalSoundEffect != null;
+                        finalSoundEffect.playSuccessSound();
                         Main.speedSlider.setEnabled(true);
                         Main.searchButton.setEnabled(false);
                         Main.clearButton.setEnabled(true);
