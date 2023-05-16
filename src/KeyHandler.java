@@ -68,7 +68,6 @@ public class KeyHandler implements KeyListener {
             }
             gui.pause = !gui.pause;
         } else if (code == KeyEvent.VK_BACK_SPACE) {
-            gui.clearBoard();
             gui.cancel = true;
             gui.pause = false;
             Main.pauseResumeButton.setText("<html><center>Pause</center></html>");
