@@ -59,7 +59,10 @@ public class Main {
                         "The A* algorithm is a powerful search algorithm used to" +
                         "<br> efficiently find the shortest path between two points." +
                         "<br> It is commonly applied in map traversal scenarios to " +
-                        "<br> determine the most efficient route to reach a destination." +
+                        "<br> determine the most efficient route to reach a destination. <br>" +
+                        "<br> F - Sum of G and H" +
+                        "<br> G - Distance from the Start" +
+                        "<br> H - Distance from the Goal" +
                         "<br><br>Click on the boxes to create obstacle nodes. <br>" +
                         "<br> Set Iteration Speed" +
                         "</center></html>"

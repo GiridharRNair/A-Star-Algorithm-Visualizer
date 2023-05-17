@@ -173,7 +173,8 @@ public class AStarGUI extends JPanel {
                     int currentNodeCost = currentNode.gCost; // New variable to store the cost of reaching the current node
                     for (int i = 0; i < openList.size(); i++) {
                         if ((openList.get(i).fCost + openList.get(i).gCost == bestNodefCost + currentNodeCost &&
-                                openList.get(i).gCost < openList.get(bestNodeIndex).gCost) || openList.get(i).fCost + openList.get(i).gCost < bestNodefCost + currentNodeCost) {
+                                openList.get(i).gCost < openList.get(bestNodeIndex).gCost) ||
+                                openList.get(i).fCost + openList.get(i).gCost < bestNodefCost + currentNodeCost) {
                             bestNodeIndex = i;
                             bestNodefCost = openList.get(i).fCost;
                         }
