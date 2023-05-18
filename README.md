@@ -8,6 +8,8 @@ A * algorithm is a searching algorithm that searches for the shortest path betwe
 The algorithm used in various applications, such as maps, in which the A* algorithm calculates the shortest distance
 between the source (initial state) and the destination (final state).
 
+https://www.educative.io/answers/what-is-the-a-star-algorithm
+
 ## Features
 
 - Interactive grid-based environment

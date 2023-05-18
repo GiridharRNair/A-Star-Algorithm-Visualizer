@@ -14,7 +14,6 @@ public class Main {
     static final int MIN_SPEED = 1;
     static final int MAX_SPEED = 100;
     public static MyJSlider speedSlider;
-    public static JLabel stats;
     public static JButton searchButton;
     public static JButton clearButton;
     public static JButton resetButton;
@@ -108,10 +107,6 @@ public class Main {
         stopSearchButton.setFocusable(false);
         stopSearchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        stats = new JLabel((String) null);
-        stats.setVisible(false);
-        stats.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         Main.clearButton.setEnabled(false);
         Main.resetButton.setEnabled(false);
         Main.pauseResumeButton.setEnabled(false);
@@ -131,7 +126,6 @@ public class Main {
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         userInputPanel.add(stopSearchButton);
         userInputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        userInputPanel.add(stats);
 
         //Set window background and add an AStarGUI object
         window.setBackground(Color.BLACK);

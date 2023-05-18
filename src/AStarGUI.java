@@ -21,7 +21,7 @@ public class AStarGUI extends JPanel {
 
     static final int MIN_SPEED = 1;
     static final int MAX_SPEED = 100;
-    final int maxCol = 12, maxRow = 12, nodeSize = 50, screenWidth = nodeSize * maxCol, screenHeight = nodeSize * maxRow;
+    final int maxCol = 15, maxRow = 11, nodeSize = 50, screenWidth = nodeSize * maxCol, screenHeight = nodeSize * maxRow;
 
     // GUI component to display the A* Algorithm
     JPanel aStarGUI;
@@ -35,8 +35,6 @@ public class AStarGUI extends JPanel {
 
     // Flags to keep track of algorithm status
     boolean done = true, goalReached = false, pause = false, cancel;
-    int totalHCost;
-    long start;
 
     /**
      * Constructor to build the GUI
@@ -72,11 +70,11 @@ public class AStarGUI extends JPanel {
      * Sets the start and goal nodes of the grid.
      */
     public void initializeGoalStartNodes() {
-        node[1][1].setStartNode();  // Set the (1,1) Node as the start node
-        startNode = node[1][1]; // Set the start node variable as the (1,1) Node
-        currentNode = startNode; // Set the current node as the start node
-        node[10][10].setGoalNode(); // Set the (10,10) Node as the goal node
-        goalNode = node[10][10]; // Set the goal node variable as the (10,10) Node
+        node[5][1].setStartNode();
+        startNode = node[5][1];
+        currentNode = startNode;
+        node[5][13].setGoalNode();
+        goalNode = node[5][13];
     }
 
     /**
@@ -99,7 +97,6 @@ public class AStarGUI extends JPanel {
         node.gCost = Math.abs(node.col - startNode.col) + Math.abs(node.row - startNode.row);
         node.hCost = Math.abs(node.col - goalNode.col) + Math.abs(node.row - goalNode.row);
         node.fCost = node.gCost + node.hCost;
-        // If the node is not the start or goal node, set its text property with its costs
         if (node != startNode && node != goalNode) {
             node.setText("<html>F:" + node.fCost + "<br>G:" + node.gCost + "<br>H:" + node.hCost + "</html>");
         }
@@ -110,9 +107,7 @@ public class AStarGUI extends JPanel {
      * Disables all buttons to prevent interference with the algorithm.
      */
     public void search() {
-
         Main.speedSlider.setEnabled(false);
-
         disableAllButtons(); // Disable all buttons to prevent interference with the algorithm
 
         // Instantiate a SoundEffect object to play success/failure sounds when the search is complete
@@ -124,13 +119,11 @@ public class AStarGUI extends JPanel {
         }
         SoundEffect finalSoundEffect = soundEffect; // Final reference to SoundEffect object to be used in the future
 
-        start = System.nanoTime(); // Get start time of the algorithm
         done = false;
         goalReached = false;
         openList = new ArrayList<>(); // Initialize list of open nodes
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(); // Create a single thread executor
-
         Runnable stepTask = () ->  {
             if (!cancel) {
                 if (!goalReached && !pause) { // If the goal has not been reached and pause has not been pressed
@@ -149,7 +142,7 @@ public class AStarGUI extends JPanel {
                     if (col - 1 >= 0) {
                         openNode(node[row][col - 1]);
                     }
-                    if (col + 1 < maxRow) {
+                    if (col + 1 < maxCol) {
                         openNode(node[row][col + 1]);
                     }
 
@@ -159,8 +152,6 @@ public class AStarGUI extends JPanel {
                         assert finalSoundEffect != null;
                         finalSoundEffect.playErrorSound();
                         Main.speedSlider.setEnabled(true);
-                        Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start) / 1_000_000 + " ms <html>");
-                        Main.stats.setVisible(true);
                         Main.searchButton.setEnabled(false);
                         Main.clearButton.setEnabled(true);
                         Main.resetButton.setEnabled(solidExist());
@@ -170,17 +161,17 @@ public class AStarGUI extends JPanel {
 
                     int bestNodeIndex = 0;
                     int bestNodefCost = Integer.MAX_VALUE;
-                    int currentNodeCost = currentNode.gCost; // New variable to store the cost of reaching the current node
                     for (int i = 0; i < openList.size(); i++) {
-                        if ((openList.get(i).fCost + openList.get(i).gCost == bestNodefCost + currentNodeCost &&
-                                openList.get(i).gCost < openList.get(bestNodeIndex).gCost) ||
-                                openList.get(i).fCost + openList.get(i).gCost < bestNodefCost + currentNodeCost) {
+                        if (openList.get(i).fCost < bestNodefCost) {
                             bestNodeIndex = i;
                             bestNodefCost = openList.get(i).fCost;
+                        } else if (openList.get(i).fCost == bestNodefCost) {
+                            if (openList.get(i).gCost < openList.get(bestNodeIndex).gCost) {
+                                bestNodeIndex = i;
+                            }
                         }
                     }
-                    currentNode = openList.get(bestNodeIndex); // Set the current node to the selected node
-
+                    currentNode = openList.get(bestNodeIndex);
                 }
 
                 if (currentNode == goalNode) { // If the goal node has been reached
@@ -225,7 +216,6 @@ public class AStarGUI extends JPanel {
         }
         SoundEffect finalSoundEffect = soundEffect;
 
-        totalHCost = 0;
         currentNode = goalNode;
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         Main.pauseResumeButton.setEnabled(true);
@@ -238,7 +228,6 @@ public class AStarGUI extends JPanel {
 
                         if (currentNode != startNode) {
                             currentNode.setAsPath();
-                            totalHCost += currentNode.hCost;
                         }
                     }
                     else {
@@ -252,8 +241,6 @@ public class AStarGUI extends JPanel {
                         Main.pauseResumeButton.setEnabled(false);
                         Main.stopSearchButton.setEnabled(false);
                         executor.shutdown();
-                        Main.stats.setText("<html>A* Algorithm Complete: " + goalReached + "<br> Time Elapsed: " + (System.nanoTime() - start)/ 1_000_000 + " ms" + "<br> Total H Cost: " + totalHCost + "<html>");
-                        Main.stats.setVisible(true);
                     }
                 }
             } else { // If the user aborts the search
@@ -292,7 +279,6 @@ public class AStarGUI extends JPanel {
         }
         initializeGoalStartNodes(); // Re-initialize the goal and start nodes
         goalReached = false; // Reset goalReached flag to false
-        Main.stats.setVisible(false); // Hide the statistics panel
     }
 
     /**
@@ -306,7 +292,6 @@ public class AStarGUI extends JPanel {
         }
         initializeGoalStartNodes(); // Re-initialize the goal and start nodes
         goalReached = false; // Reset goalReached flag to false
-        Main.stats.setVisible(false); // Hide the statistics panel
     }
 
     /**
