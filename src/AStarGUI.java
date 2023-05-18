@@ -101,7 +101,7 @@ public class AStarGUI extends JPanel {
         node.fCost = node.gCost + node.hCost;
         // If the node is not the start or goal node, set its text property with its costs
         if (node != startNode && node != goalNode) {
-            node.setText("<html>F:" + node.gCost + "<br>G:" + node.hCost + "<br>H:" + node.fCost + "</html>");
+            node.setText("<html>F:" + node.fCost + "<br>G:" + node.gCost + "<br>H:" + node.hCost + "</html>");
         }
     }
 
