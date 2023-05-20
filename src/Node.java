@@ -50,7 +50,7 @@ public class Node extends JButton implements ActionListener {
      * Sets the Node as the start node and updates its visual display.
      */
     public void setStartNode() {
-        setBackground(Color.BLUE);
+        setBackground(new Color(255,114,118));
         setForeground(Color.WHITE);
         setText("Start");
         start = true;
@@ -60,7 +60,7 @@ public class Node extends JButton implements ActionListener {
      * Sets the Node as the goal node and updates its visual display.
      */
     public void setGoalNode() {
-        setBackground(Color.YELLOW);
+        setBackground(new Color(54, 103, 54));
         setForeground(Color.BLACK);
         setText("Goal");
         goal = true;
@@ -71,7 +71,7 @@ public class Node extends JButton implements ActionListener {
      */
     public void setAsChecked() {
         if (!start && !goal) {
-            setBackground(Color.ORANGE);
+            setBackground(new Color(173, 216, 230));
             setForeground(Color.BLACK);
         }
         checked = true;
@@ -82,7 +82,7 @@ public class Node extends JButton implements ActionListener {
      * most optimal path.
      */
     public void setAsPath() {
-        setBackground(Color.GREEN);
+        setBackground(new Color(144, 238, 144));
         setForeground(Color.BLACK);
     }
 
@@ -132,7 +132,7 @@ public class Node extends JButton implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (!start && !goal && !disabled) {
             if (!clicked) {
-                setBackground(Color.BLACK);
+                setBackground(new Color(128, 120, 120));
                 setForeground(Color.BLACK);
                 solid = true;
                 clicked = true;
